@@ -52,14 +52,14 @@ def extract_structured_data(text, doc_name, doc_type):
    Each object has:
    - "clause": the text of the clause (string)
 
-2. "key_legal_information": An array of key legal facts/information extracted from the document.
+2. "key_legal_information": An array of ONLY the most important legal facts. Keep each item to a single concise line. Skip trivial or obvious information. Focus on: parties involved, governing law, jurisdiction, key obligations, termination conditions, and critical terms.
    Each object has:
-   - "info": the key legal information text (string)
+   - "info": a short, single-line key legal fact (string)
 
 3. "numeric_data": An array of numeric values found in the document (dates, monetary amounts, percentages, durations, etc).
    Each object has:
    - "numeric_value": the numeric value as a string (e.g. "3000rs", "28 April 2026", "30 days", "15%")
-   - "context": the context or sentence associated with that numeric value (string)
+   - "context": a short sentence describing what this value relates to (string)
 
 Example output:
 {
@@ -69,18 +69,18 @@ Example output:
   ],
   "key_legal_information": [
     { "info": "Parties: ABC Corp (Employer) and John Doe (Employee)" },
-    { "info": "Governing Law: Laws of India, jurisdiction of Mumbai courts" },
-    { "info": "Employee role: Senior Software Engineer, reporting to CTO" }
+    { "info": "Governing Law: Laws of India, Mumbai courts" },
+    { "info": "Role: Senior Software Engineer, reporting to CTO" }
   ],
   "numeric_data": [
-    { "numeric_value": "3000rs", "context": "3000rs of fixed deposit is needed as security" },
-    { "numeric_value": "28 April 2026", "context": "Agreement is valid till 28 April 2026" },
-    { "numeric_value": "30 days", "context": "Either party must provide 30 days written notice for termination" },
-    { "numeric_value": "50000rs per month", "context": "Monthly salary payable is 50000rs per month" }
+    { "numeric_value": "₹3,000", "context": "Security deposit required" },
+    { "numeric_value": "28 April 2026", "context": "Agreement validity end date" },
+    { "numeric_value": "30 days", "context": "Termination notice period" },
+    { "numeric_value": "₹50,000/month", "context": "Monthly salary" }
   ]
 }
 
-Extract ALL clauses, legal information, and numeric data you can find. Be thorough and accurate. Return ONLY the JSON object, nothing else."""
+Be thorough with clauses and numeric data. For key_legal_information, include ONLY important facts (max 8-10 items), each as a short single line. Return ONLY the JSON object."""
 
     try:
         response = client.chat.completions.create(
