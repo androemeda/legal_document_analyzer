@@ -59,6 +59,31 @@ function ClauseItem({ clause, index }) {
   );
 }
 
+function PieChart({ distribution }) {
+  const { high = 0, moderate = 0, low = 0, total = 0 } = distribution || {};
+  if (total === 0) return <div className="pie-empty">No clauses</div>;
+
+  const highPct = Math.round((high / total) * 100);
+  const modPct = Math.round((moderate / total) * 100);
+
+  const gradient = `conic-gradient(
+    var(--red) 0% ${highPct}%,
+    var(--orange) ${highPct}% ${highPct + modPct}%,
+    var(--green) ${highPct + modPct}% 100%
+  )`;
+
+  return (
+    <div className="pie-wrap">
+      <div className="pie" style={{ background: gradient }} />
+      <div className="pie-legend">
+        <span className="legend-item"><span className="dot high" />{high} High</span>
+        <span className="legend-item"><span className="dot moderate" />{moderate} Mod</span>
+        <span className="legend-item"><span className="dot low" />{low} Low</span>
+      </div>
+    </div>
+  );
+}
+
 function Results({ analysisData, loading, error }) {
   if (loading) {
     return (
@@ -86,10 +111,15 @@ function Results({ analysisData, loading, error }) {
 
   return (
     <div className="results-wrap">
-      {/* Summary bar */}
-      <div className="summary-bar">
-        <h2>Analysis Summary</h2>
-        <p>{analysisData.summary}</p>
+      {/* Summary + Pie Chart */}
+      <div className="summary-bar two-col">
+        <div className="summary-text">
+          <h2>Analysis Summary</h2>
+          <p>{analysisData.summary}</p>
+        </div>
+        <div className="summary-chart">
+          <PieChart distribution={analysisData.risk_distribution} />
+        </div>
       </div>
 
       {/* Clauses */}

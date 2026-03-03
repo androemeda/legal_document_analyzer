@@ -377,6 +377,11 @@ Be specific, cite relevant content when possible, and focus on actionable insigh
             [k['doc_name'] for k in key_legal_information]
         ))
         
+        # Compute risk distribution
+        high_count = sum(1 for c in clauses if c.get('risk_level') == 'high')
+        moderate_count = sum(1 for c in clauses if c.get('risk_level') == 'moderate')
+        low_count = sum(1 for c in clauses if c.get('risk_level') == 'low')
+
         return jsonify({
             'success': True,
             'documents_analyzed': len(all_doc_names),
@@ -385,7 +390,13 @@ Be specific, cite relevant content when possible, and focus on actionable insigh
             'risk_assessment': analysis_result.get('risk_assessment', ''),
             'clauses': risky_clauses,
             'key_legal_information': key_legal_information,
-            'numeric_data': numeric_data
+            'numeric_data': numeric_data,
+            'risk_distribution': {
+                'high': high_count,
+                'moderate': moderate_count,
+                'low': low_count,
+                'total': len(clauses)
+            }
         }), 200
         
     except json.JSONDecodeError as e:

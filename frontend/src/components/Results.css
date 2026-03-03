@@ -13,6 +13,21 @@
   padding: 1.5rem 2rem;
 }
 
+.summary-bar.two-col {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.summary-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.summary-chart {
+  flex-shrink: 0;
+}
+
 .summary-bar h2 {
   font-size: 1.15rem;
   font-weight: 700;
@@ -26,16 +41,55 @@
   line-height: 1.6;
 }
 
-.risk-assessment-chip {
-  display: inline-block;
-  margin-top: 0.75rem;
-  padding: 0.4rem 0.9rem;
+/* Pie Chart */
+.pie-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pie {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+}
+
+.pie-empty {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
   background: var(--light-gray);
-  border-radius: 6px;
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--dark-gray);
+}
+
+.pie-legend {
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--charcoal);
 }
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.legend-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-item .dot.high { background: var(--red); }
+.legend-item .dot.moderate { background: var(--orange); }
+.legend-item .dot.low { background: var(--green); }
 
 /* ===== Expand Block ===== */
 .expand-block {
@@ -383,6 +437,10 @@
 
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
+  .summary-bar.two-col {
+    flex-direction: column;
+  }
+
   .summary-bar,
   .numeric-section {
     padding: 1.25rem 1.25rem;
