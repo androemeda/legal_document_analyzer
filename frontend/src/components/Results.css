@@ -242,6 +242,156 @@
   color: #7f8c8d;
 }
 
+/* Risk Assessment Text */
+.risk-assessment-text {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 6px;
+  color: #2c3e50;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Clause content and meta */
+.clause-content {
+  flex: 1;
+}
+
+.clause-content p {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+  line-height: 1.6;
+}
+
+.clause-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.doc-badge {
+  padding: 0.2rem 0.6rem;
+  background: #e8eaf6;
+  color: #3949ab;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.type-badge {
+  padding: 0.2rem 0.6rem;
+  background: #e0f2f1;
+  color: #00695c;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.risk-label {
+  padding: 0.2rem 0.6rem;
+  background: #ffebee;
+  color: #c62828;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.risk-explanation {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #fff3e0;
+  border-left: 3px solid #fb8c00;
+  border-radius: 4px;
+  color: #e65100;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* High risk clause item styling */
+.risk-item.high-risk {
+  border-left-color: #c62828;
+  background: #fff5f5;
+}
+
+.risk-marker.danger {
+  background: #c62828;
+}
+
+.risk-marker.safe {
+  background: #66bb6a;
+}
+
+/* Info content wrapper */
+.info-content {
+  flex: 1;
+}
+
+.info-content p {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+  line-height: 1.6;
+}
+
+/* Info badge */
+.info-badge {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* Numeric Section */
+.numeric-section {
+  background: #f3e5f5;
+  border-color: #ab47bc;
+}
+
+.numeric-header svg {
+  color: #8e24aa;
+}
+
+.numeric-badge {
+  background: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.numeric-list {
+  list-style: none;
+}
+
+.numeric-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.numeric-item:hover {
+  transform: translateX(4px);
+}
+
+.numeric-value-badge {
+  padding: 0.4rem 0.8rem;
+  background: linear-gradient(135deg, #7b1fa2, #ab47bc);
+  color: white;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.numeric-context {
+  color: #2c3e50;
+  line-height: 1.6;
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .results-container {
     padding: 1.5rem;
@@ -256,7 +406,13 @@
   }
 
   .risk-item,
-  .legal-info-item {
+  .legal-info-item,
+  .numeric-item {
     padding: 0.75rem;
+  }
+
+  .numeric-item {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

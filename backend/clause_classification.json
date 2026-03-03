@@ -1,0 +1,154 @@
+{
+  "high_risk": [
+    {
+      "id": "termination_without_notice",
+      "description": "Termination without prior notice",
+      "regex": "without\\s+(prior\\s+)?notice",
+      "weight": 3
+    },
+    {
+      "id": "sole_discretion",
+      "description": "Unilateral decision-making at sole discretion",
+      "regex": "sole\\s+discretion",
+      "weight": 3
+    },
+    {
+      "id": "indemnity_clause",
+      "description": "Employee indemnifies employer for losses",
+      "regex": "indemnif(y|ies|ication)|hold\\s+harmless",
+      "weight": 3
+    },
+    {
+      "id": "non_refundable_penalty",
+      "description": "Non-refundable penalty or liquidated damages",
+      "regex": "non[-\\s]?refundable|liquidated\\s+damages",
+      "weight": 3
+    },
+    {
+      "id": "training_bond_penalty",
+      "description": "Employment bond with financial penalty",
+      "regex": "training\\s+bond|minimum\\s+period.*months|pay\\s+₹?\\d+.*damages",
+      "weight": 3
+    },
+    {
+      "id": "immediate_termination",
+      "description": "Immediate termination upon breach",
+      "regex": "immediate\\s+termination",
+      "weight": 3
+    },
+    {
+      "id": "waiver_of_rights",
+      "description": "Waiver of statutory or legal rights",
+      "regex": "waive(s|d)?\\s+(all\\s+)?rights?",
+      "weight": 3
+    },
+    {
+      "id": "automatic_renewal",
+      "description": "Automatic renewal without explicit consent",
+      "regex": "automatic\\s+renewal",
+      "weight": 3
+    },
+    {
+      "id": "unlimited_liability",
+      "description": "Unlimited liability imposed on employee",
+      "regex": "liable\\s+for\\s+all\\s+losses|unlimited\\s+liability",
+      "weight": 3
+    }
+  ],
+
+  "moderate_risk": [
+    {
+      "id": "non_compete",
+      "description": "Post-employment non-compete restriction",
+      "regex": "non[-\\s]?compete|competing\\s+business",
+      "weight": 2
+    },
+    {
+      "id": "discretionary_bonus",
+      "description": "Bonus at employer discretion",
+      "regex": "bonus.*discretion",
+      "weight": 2
+    },
+    {
+      "id": "modify_terms",
+      "description": "Right to modify terms unilaterally",
+      "regex": "modify\\s+terms|subject\\s+to\\s+change",
+      "weight": 2
+    },
+    {
+      "id": "remote_work_withdrawal",
+      "description": "Employer may withdraw remote work benefits",
+      "regex": "withdraw\\s+remote\\s+working|modify\\s+remote",
+      "weight": 2
+    },
+    {
+      "id": "limitation_of_liability",
+      "description": "Employer liability capped",
+      "regex": "liability\\s+shall\\s+not\\s+exceed",
+      "weight": 2
+    },
+    {
+      "id": "material_breach",
+      "description": "Termination for material breach (broad wording)",
+      "regex": "material\\s+breach",
+      "weight": 2
+    },
+    {
+      "id": "performance_based_revision",
+      "description": "Salary revision at employer discretion",
+      "regex": "revise\\s+the\\s+compensation|performance\\s+review",
+      "weight": 2
+    },
+    {
+      "id": "probation_short_notice",
+      "description": "Short notice period during probation",
+      "regex": "probation.*\\d+\\s+days?",
+      "weight": 2
+    }
+  ],
+
+  "low_risk": [
+    {
+      "id": "mutual_termination",
+      "description": "Termination with notice by either party",
+      "regex": "\\d+\\s+days?\\s+written\\s+notice",
+      "weight": -1
+    },
+    {
+      "id": "governing_law",
+      "description": "Clause specifying governing law",
+      "regex": "governed\\s+by\\s+the\\s+laws\\s+of",
+      "weight": -1
+    },
+    {
+      "id": "jurisdiction_clause",
+      "description": "Courts with jurisdiction mentioned",
+      "regex": "jurisdiction\\s+of\\s+courts",
+      "weight": -1
+    },
+    {
+      "id": "arbitration_clause",
+      "description": "Dispute resolution through arbitration",
+      "regex": "arbitration|arbitration\\s+and\\s+conciliation\\s+act",
+      "weight": -1
+    },
+    {
+      "id": "leave_entitlement",
+      "description": "Paid leave entitlement",
+      "regex": "paid\\s+leave|\\d+\\s+days\\s+of\\s+paid\\s+leave",
+      "weight": -1
+    },
+    {
+      "id": "salary_payment_clause",
+      "description": "Monthly salary payment clause",
+      "regex": "salary.*payable|monthly\\s+installments",
+      "weight": -1
+    },
+    {
+      "id": "data_protection_compliance",
+      "description": "Compliance with data protection laws",
+      "regex": "data\\s+protection|comply\\s+with\\s+applicable\\s+law",
+      "weight": -1
+    }
+  ]
+}
