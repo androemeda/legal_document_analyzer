@@ -1,0 +1,85 @@
+# ========================
+# Environment & Secrets
+# ========================
+.env
+.env.*
+!.env.example
+
+# ========================
+# Python (Backend)
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+env/
+ENV/
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ========================
+# Node.js (Frontend)
+# ========================
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.local
+
+# ========================
+# Build Output
+# ========================
+dist/
+dist-ssr/
+build/
+*.local
+
+# ========================
+# OS Files
+# ========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ========================
+# IDE / Editor
+# ========================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+*~
+
+# ========================
+# Logs
+# ========================
+logs/
+*.log
+
+# ========================
+# Misc
+# ========================
+.cache/
+.temp/
+.tmp/
+*.bak
+*.orig
