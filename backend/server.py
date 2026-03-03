@@ -6,11 +6,20 @@ import os
 import json
 import re
 import base64
+from dotenv import load_dotenv
 from pypdf import PdfReader
 from openai import OpenAI
 
+load_dotenv()
+
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+
+# CORS: allow specific frontend origin in production, all origins in dev
+frontend_url = os.environ.get("FRONTEND_URL", "*")
+if frontend_url == "*":
+    CORS(app)
+else:
+    CORS(app, origins=[frontend_url])
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -385,4 +394,6 @@ Be specific, cite relevant content when possible, and focus on actionable insigh
         return jsonify({'error': f'Error analyzing document: {str(e)}'}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3001, debug=True)
+    debug = os.environ.get('DEBUG', 'false').lower() == 'true'
+    port = int(os.environ.get('PORT', 3001))
+    app.run(host='0.0.0.0', port=port, debug=debug)
