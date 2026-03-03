@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 import io
 import os
 import json
+import re
 import base64
 from pypdf import PdfReader
 from openai import OpenAI
@@ -13,6 +14,10 @@ CORS(app)  # Enable CORS for all routes
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+# Load clause classification rules
+with open(os.path.join(os.path.dirname(__file__), 'clause_classification.json'), 'r') as f:
+    clause_rules = json.load(f)
 
 # Store structured extracted data in memory
 clauses = []              # { risk_score, clause, doc_name, doc_type }
@@ -126,6 +131,54 @@ Extract ALL clauses, legal information, and numeric data you can find. Be thorou
 
     except Exception as e:
         raise Exception(f"Error extracting structured data via OpenAI: {str(e)}")
+
+
+def score_clauses():
+    """
+    Score each clause in the clauses array using regex rules from clause_classification.json.
+    Each clause gets a risk_score based on matching patterns:
+      - high_risk rules have weight 3
+      - moderate_risk rules have weight 2
+      - low_risk rules have weight -1 (reduce score)
+    Final risk_score determines the risk level:
+      - score >= 3 → 'high'
+      - score >= 1 → 'moderate'
+      - score < 1  → 'low'
+    """
+    for clause_obj in clauses:
+        text = clause_obj['clause'].lower()
+        score = 0
+        matched_rules = []
+
+        # Check against high_risk rules
+        for rule in clause_rules.get('high_risk', []):
+            if re.search(rule['regex'], text, re.IGNORECASE):
+                score += rule['weight']
+                matched_rules.append(rule['description'])
+
+        # Check against moderate_risk rules
+        for rule in clause_rules.get('moderate_risk', []):
+            if re.search(rule['regex'], text, re.IGNORECASE):
+                score += rule['weight']
+                matched_rules.append(rule['description'])
+
+        # Check against low_risk rules (these reduce the score)
+        for rule in clause_rules.get('low_risk', []):
+            if re.search(rule['regex'], text, re.IGNORECASE):
+                score += rule['weight']
+                matched_rules.append(rule['description'])
+
+        # Assign risk level based on final score
+        if score >= 3:
+            risk_level = 'high'
+        elif score >= 1:
+            risk_level = 'moderate'
+        else:
+            risk_level = 'low'
+
+        clause_obj['risk_score'] = score
+        clause_obj['risk_level'] = risk_level
+        clause_obj['matched_rules'] = matched_rules
 
 
 @app.route('/')
@@ -258,12 +311,18 @@ def get_response():
         return jsonify({'error': 'No documents uploaded. Please upload a PDF or image first'}), 400
     
     try:
+        # Score all clauses using clause_classification.json rules
+        score_clauses()
+
+        # Filter only high and moderate risk clauses
+        risky_clauses = [c for c in clauses if c.get('risk_level') in ('high', 'moderate')]
+
         # Build document context from the structured arrays
-        clauses_text = "\n".join([f"- [{c['doc_name']}] {c['clause']}" for c in clauses])
+        clauses_text = "\n".join([f"- [{c['doc_name']}] (risk: {c['risk_level']}, score: {c['risk_score']}) {c['clause']}" for c in risky_clauses])
         info_text = "\n".join([f"- [{k['doc_name']}] {k['info']}" for k in key_legal_information])
         numeric_text = "\n".join([f"- {n['numeric_value']}: {n['context']}" for n in numeric_data])
 
-        document_context = f"""CLAUSES EXTRACTED:
+        document_context = f"""HIGH & MODERATE RISK CLAUSES:
 {clauses_text}
 
 KEY LEGAL INFORMATION:
@@ -274,26 +333,19 @@ NUMERIC DATA:
 
         # Create system prompt for legal document analysis
         system_prompt = """You are an expert legal document analyzer specializing in contract review and risk assessment. 
-You are given pre-extracted structured data from legal documents including clauses, key legal information, and numeric data.
+You are given pre-extracted structured data from legal documents including risky clauses (already scored), key legal information, and numeric data.
 
 Your task is to analyze this data and provide:
 
 1. A concise summary of the document's purpose and main provisions
-2. Identification of HIGH-RISK CLAUSES: flag which of the provided clauses are risky and why
-3. Overall risk assessment
+2. Overall risk assessment based on the flagged clauses
 
 You must respond ONLY with a valid JSON object in the following format:
 {
   "summary": "A clear, concise summary of the document (2-4 sentences)",
-  "risk_assessment": "Overall risk level: LOW / MODERATE / HIGH with brief justification",
-  "high_risk_clause_indices": [0, 2, 5],
-  "risk_explanations": {
-    "0": "Explanation of why clause at index 0 is risky",
-    "2": "Explanation of why clause at index 2 is risky"
-  }
+  "risk_assessment": "Overall risk level: LOW / MODERATE / HIGH with brief justification"
 }
 
-The high_risk_clause_indices should be the indices (0-based) of clauses from the clauses array that you consider high risk.
 Be specific, cite relevant content when possible, and focus on actionable insights."""
 
         # Call OpenAI API
@@ -322,11 +374,9 @@ Be specific, cite relevant content when possible, and focus on actionable insigh
             'filenames': all_doc_names,
             'summary': analysis_result.get('summary', ''),
             'risk_assessment': analysis_result.get('risk_assessment', ''),
-            'clauses': clauses,
+            'clauses': risky_clauses,
             'key_legal_information': key_legal_information,
-            'numeric_data': numeric_data,
-            'high_risk_clause_indices': analysis_result.get('high_risk_clause_indices', []),
-            'risk_explanations': analysis_result.get('risk_explanations', {})
+            'numeric_data': numeric_data
         }), 200
         
     except json.JSONDecodeError as e:

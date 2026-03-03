@@ -43,9 +43,6 @@ function Results({ analysisData, loading, error }) {
     return null;
   }
 
-  const highRiskIndices = analysisData.high_risk_clause_indices || [];
-  const riskExplanations = analysisData.risk_explanations || {};
-
   return (
     <div className="results-container">
       <div className="results-header">
@@ -104,47 +101,63 @@ function Results({ analysisData, loading, error }) {
               <line x1="12" y1="9" x2="12" y2="13"></line>
               <line x1="12" y1="17" x2="12.01" y2="17"></line>
             </svg>
-            <h3>Clauses</h3>
+            <h3>Risky Clauses</h3>
             <span className="badge risk-badge">
-              {analysisData.clauses?.length || 0} found
-              {highRiskIndices.length > 0 && ` · ${highRiskIndices.length} high risk`}
+              {analysisData.clauses?.length || 0} flagged
             </span>
           </div>
 
           {analysisData.clauses && analysisData.clauses.length > 0 ? (
             <ul className="risk-list">
-              {analysisData.clauses.map((clause, index) => {
-                const isHighRisk = highRiskIndices.includes(index);
-                return (
-                  <li
-                    key={index}
-                    className={`risk-item ${isHighRisk ? 'high-risk' : ''}`}
-                  >
-                    <div className={`risk-marker ${isHighRisk ? 'danger' : 'safe'}`}>
-                      {index + 1}
+              {analysisData.clauses.map((clause, index) => (
+                <li
+                  key={index}
+                  className={`risk-item ${clause.risk_level === 'high' ? 'high-risk' : ''}`}
+                >
+                  <div className={`risk-marker ${clause.risk_level === 'high' ? 'danger' : 'warning'}`}>
+                    {index + 1}
+                  </div>
+                  <div className="clause-content">
+                    <p>{clause.clause}</p>
+                    <div className="clause-meta">
+                      <span className="doc-badge">{clause.doc_name}</span>
+                      <span className="type-badge">{clause.doc_type}</span>
+                      <span className={`risk-label ${clause.risk_level}`}>
+                        {clause.risk_level === 'high' ? '⚠ High Risk' : '⚡ Moderate Risk'}
+                      </span>
+                      <span className="score-badge">Score: {clause.risk_score}</span>
                     </div>
-                    <div className="clause-content">
-                      <p>{clause.clause}</p>
-                      <div className="clause-meta">
-                        <span className="doc-badge">{clause.doc_name}</span>
-                        <span className="type-badge">{clause.doc_type}</span>
-                        {isHighRisk && (
-                          <span className="risk-label">⚠ High Risk</span>
-                        )}
+                    {clause.matched_rules && clause.matched_rules.length > 0 && (
+                      <div className="matched-rules">
+                        <strong>Matched rules:</strong>
+                        <ul>
+                          {clause.matched_rules.map((rule, rIdx) => (
+                            <li key={rIdx}>{rule}</li>
+                          ))}
+                        </ul>
                       </div>
-                      {isHighRisk && riskExplanations[String(index)] && (
-                        <p className="risk-explanation">
-                          {riskExplanations[String(index)]}
-                        </p>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
+                    )}
+                  </div>
+                </li>
+              ))}
             </ul>
           ) : (
             <div className="no-risks">
-              <p>No clauses extracted from the documents.</p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <p>No high or moderate risk clauses detected. The document appears safe.</p>
             </div>
           )}
         </div>
